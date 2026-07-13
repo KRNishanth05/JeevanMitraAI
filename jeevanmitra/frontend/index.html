@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 JeevanMitra AI - Multilingual Smart Farming Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <h1><span class="logo-icon">🌿</span> JeevanMitra AI</h1>
+        <div class="language-selector" id="languageSelector">
+            <button class="lang-btn active" onclick="setLanguage('en')" data-lang="en">🇬🇧 English</button>
+            <button class="lang-btn" onclick="setLanguage('ml')" data-lang="ml">🇮🇳 മലയാളം</button>
+            <button class="lang-btn" onclick="setLanguage('hi')" data-lang="hi">🇮🇳 हिन्दी</button>
+            <button class="lang-btn" onclick="setLanguage('kn')" data-lang="kn">🇮🇳 ಕನ್ನಡ</button>
+            <button class="lang-btn" onclick="setLanguage('ta')" data-lang="ta">🇮🇳 தமிழ்</button>
+            <button class="lang-btn" onclick="setLanguage('te')" data-lang="te">🇮🇳 తెలుగు</button>
+        </div>
+    </div>
+</div>
+
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()" title="Open AI Assistant">💬</button>
+
+<div class="main-container" id="mainContainer">
+    <div class="content-area">
+        <div class="tabs" id="tabNav">
+            <button class="tab-btn active" onclick="switchTab('crop')" data-tab="crop">🌱 <span data-i18n="tab_crop">Crop Recommendation</span></button>
+            <button class="tab-btn" onclick="switchTab('yield')" data-tab="yield">📊 <span data-i18n="tab_yield">Yield Prediction</span></button>
+            <button class="tab-btn" onclick="switchTab('disease')" data-tab="disease">🔍 <span data-i18n="tab_disease">Disease Detection</span></button>
+            <button class="tab-btn" onclick="switchTab('market')" data-tab="market">💰 <span data-i18n="tab_market">Market Prices</span></button>
+        </div>
+
+        <!-- Tab: Crop Recommendation -->
+        <div class="tab-content active" id="tab-crop">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>📋 <span data-i18n="soil_data">Soil & Environment Data</span></h2>
+                    <div class="btn-group" style="margin-bottom:1rem;">
+                        <button class="btn btn-info btn-sm" onclick="autoFillWeather()">🌤️ <span data-i18n="auto_weather">Auto-fill Weather</span></button>
+                        <button class="btn btn-sm" style="background:#f3f3f3;color:#333;" onclick="resetSliders()">🔄 Reset</button>
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-value" id="n-value">50</span></label>
+                        <input type="range" id="n" min="0" max="140" value="50" oninput="updateSlider('n');livePreviewCrop()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-value" id="p-value">50</span></label>
+                        <input type="range" id="p" min="5" max="145" value="50" oninput="updateSlider('p');livePreviewCrop()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-value" id="k-value">50</span></label>
+                        <input type="range" id="k" min="5" max="205" value="50" oninput="updateSlider('k');livePreviewCrop()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="temperature">Temperature</span> <span class="range-value" id="temp-value">25</span>°C</label>
+                        <input type="range" id="temp" min="8" max="43" value="25" oninput="updateSlider('temp');livePreviewCrop()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="humidity">Humidity</span> <span class="range-value" id="hum-value">65</span>%</label>
+                        <input type="range" id="hum" min="14" max="100" value="65" oninput="updateSlider('hum');livePreviewCrop()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="ph">Soil pH</span> <span class="range-value" id="ph-value">6.5</span></label>
+                        <input type="range" id="ph" min="3.5" max="9.5" value="6.5" step="0.1" oninput="updateSlider('ph');livePreviewCrop()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="rainfall">Rainfall</span> <span class="range-value" id="rain-value">150</span>mm</label>
+                        <input type="range" id="rain" min="20" max="300" value="150" oninput="updateSlider('rain');livePreviewCrop()">
+                    </div>
+                    <button class="btn btn-primary btn-block" id="recommendBtn" onclick="recommendCropWithFeedback()">🔮 <span data-i18n="get_recommendations">Get Recommendations</span></button>
+                    <div id="live-preview" style="margin-top:1rem;"></div>
+                </div>
+                <div class="card" id="crop-results-card">
+                    <h2>🎯 <span data-i18n="recommendations">Recommendations</span></h2>
+                    <p style="color:var(--text-light);" data-i18n="enter_data_prompt">Enter soil data and click "Get Recommendations"</p>
+                    <div id="crop-result-area"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Yield Prediction -->
+        <div class="tab-content" id="tab-yield">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>📊 <span data-i18n="yield_input">Yield Prediction Input</span></h2>
+                    <div class="form-group">
+                        <label><span data-i18n="select_crop">Select Crop</span></label>
+                        <select id="yield-crop" onchange="predictYield()">
+                            <option value="rice">Rice</option>
+                            <option value="wheat">Wheat</option>
+                            <option value="maize">Maize</option>
+                            <option value="cotton">Cotton</option>
+                            <option value="sugarcane">Sugarcane</option>
+                            <option value="millet">Millet</option>
+                            <option value="banana">Banana</option>
+                            <option value="potato">Potato</option>
+                            <option value="groundnut">Groundnut</option>
+                            <option value="tomato">Tomato</option>
+                            <option value="onion">Onion</option>
+                            <option value="chickpea">Chickpea</option>
+                            <option value="soybean">Soybean</option>
+                            <option value="sunflower">Sunflower</option>
+                            <option value="turmeric">Turmeric</option>
+                            <option value="mustard">Mustard</option>
+                            <option value="garlic">Garlic</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="nitrogen">Nitrogen (N)</span> <span class="range-value" id="yn-value">60</span></label>
+                        <input type="range" id="yn" min="0" max="140" value="60" oninput="updateSlider('yn');predictYield()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="phosphorus">Phosphorus (P)</span> <span class="range-value" id="yp-value">50</span></label>
+                        <input type="range" id="yp" min="5" max="145" value="50" oninput="updateSlider('yp');predictYield()">
+                    </div>
+                    <div class="form-group">
+                        <label><span data-i18n="potassium">Potassium (K)</span> <span class="range-value" id="yk-value">60</span></label>
+                        <input type="range" id="yk" min="5" max="205" value="60" oninput="updateSlider('yk');predictYield()">
+                    </div>
+                    <div class="form-group">
+                        <label>Area (hectares) <span class="range-value" id="ya-value">1.0</span></label>
+                        <input type="range" id="ya" min="0.1" max="10" value="1.0" step="0.1" oninput="updateSlider('ya');predictYield()">
+                    </div>
+                </div>
+                <div class="card" id="yield-results-card">
+                    <h2>📈 <span data-i18n="yield_results">Yield Prediction Results</span></h2>
+                    <p style="color:var(--text-light);" data-i18n="enter_yield_prompt">Enter parameters and click "Predict Yield"</p>
+                    <div id="yield-result-area"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Disease Detection -->
+        <div class="tab-content" id="tab-disease">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>📸 <span data-i18n="upload_leaf">Upload Leaf Image</span></h2>
+                    <div class="upload-area" onclick="document.getElementById('leaf-image').click()">
+                        <div style="font-size:4rem;">🌿</div>
+                        <p data-i18n="click_upload">Click to upload or drag & drop</p>
+                        <p style="font-size:0.85rem;color:var(--text-light);">JPG, PNG, JPEG</p>
+                        <input type="file" id="leaf-image" accept="image/*" style="display:none" onchange="previewImage(event)">
+                    </div>
+                    <div id="image-preview" style="text-align:center;margin-top:1rem;"></div>
+                    <button class="btn btn-primary btn-block" onclick="detectDisease()" style="margin-top:1rem;">🔬 <span data-i18n="detect_disease">Detect Disease</span></button>
+                    <div style="margin-top:1rem;">
+                        <h4>🖼️ <span data-i18n="quick_demo">Quick Demo</span></h4>
+                        <div class="btn-group">
+                            <button class="btn btn-info btn-sm" onclick="demoDisease('healthy')">✅ Healthy</button>
+                            <button class="btn btn-accent btn-sm" onclick="demoDisease('leaf_blight')">⚠️ Leaf Blight</button>
+                            <button class="btn btn-sm" style="background:#795548;color:white;" onclick="demoDisease('rust')">🔴 Rust</button>
+                            <button class="btn btn-sm" style="background:#607d8b;color:white;" onclick="demoDisease('powdery_mildew')">🌫️ Mildew</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" id="disease-results-card">
+                    <h2>🔍 <span data-i18n="diagnosis">Diagnosis Results</span></h2>
+                    <p style="color:var(--text-light);" data-i18n="upload_prompt">Upload an image and click "Detect Disease"</p>
+                    <div id="disease-result-area"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Market Prices -->
+        <div class="tab-content" id="tab-market">
+            <div class="card">
+                <h2>💰 <span data-i18n="market_prices">Current Market Prices</span></h2>
+                <p style="color:var(--text-light);margin-bottom:1rem;"><span data-i18n="last_updated">Last updated</span>: <span id="market-date"></span></p>
+                <div style="overflow-x:auto;">
+                    <table class="price-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="crop_col">Crop</th>
+                                <th data-i18n="price_col">Price (₹/quintal)</th>
+                                <th data-i18n="market_col">Market</th>
+                                <th data-i18n="trend_col">Trend</th>
+                                <th>7-Day Change</th>
+                            </tr>
+                        </thead>
+                        <tbody id="price-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card" style="margin-top:1rem;">
+                <h2>📊 <span data-i18n="price_chart">Price Chart</span></h2>
+                <canvas id="price-chart" style="width:100%;max-height:300px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Panel -->
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-header">
+            <h3>🤖 JeevanMitra AI</h3>
+            <button class="chat-close" onclick="toggleChat()">✕</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">
+                <div class="chat-avatar bot">🤖</div>
+                <div class="chat-bubble" id="welcome-message">Hello! I'm JeevanMitra AI — your smart farming companion. Ask me anything! 🌿</div>
+            </div>
+        </div>
+        <div class="quick-actions" id="quickActions">
+            <button class="quick-action" onclick="quickChat('crop')" data-i18n="qa_crop">🌱 Best crop to grow?</button>
+            <button class="quick-action" onclick="quickChat('yield')" data-i18n="qa_yield">📊 Predict my yield</button>
+            <button class="quick-action" onclick="quickChat('disease')" data-i18n="qa_disease">🔍 Check plant disease</button>
+            <button class="quick-action" onclick="quickChat('price')" data-i18n="qa_price">💰 Market prices</button>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your question..." onkeypress="handleChatEnter(event)">
+            <button class="chat-voice" id="chatVoiceBtn" onclick="startChatVoice()" title="Voice input">🎤</button>
+            <button class="chat-send" onclick="sendChatMessage()">➤</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast" style="display:none;"></div>
+
+<script src="script.js"></script>
+
+<div id="apiModal" class="api-modal-overlay">
+  <div class="api-modal">
+    <h2>🌿 JeevanMitra AI — Free Groq AI Setup</h2>
+    <div class="api-modal-note green">⚡ <strong>100% Free — No credit card needed!</strong></div>
+    <p><strong>Get your free key in 60 seconds:</strong></p>
+    <ol style="font-size:0.9rem;line-height:2;padding-left:1.2rem;">
+      <li>Go to <strong><a href="https://console.groq.com" target="_blank" style="color:#6c3fc5;">console.groq.com</a></strong></li>
+      <li>Sign up free → click <strong>"API Keys"</strong> → <strong>"Create API Key"</strong></li>
+      <li>Paste it below 👇</li>
+    </ol>
+    <input type="password" class="api-key-input" id="apiKeyInput" placeholder="gsk_..." autocomplete="off">
+    <div class="api-modal-note">🆓 Free tier: <strong>14,400 requests/day</strong> — more than enough!</div>
+    <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+      <button class="btn btn-primary" style="flex:1;" id="saveKeyBtn">✅ Save & Activate</button>
+      <button class="btn" style="flex:1;background:#f5f5f5;color:#333;" id="skipKeyBtn">⚡ Demo Mode</button>
+    </div>
+  </div>
+</div>
+<div id="apiKeyBar" class="api-key-bar" style="display:none;">🔑 <span id="apiKeyStatus">Connected</span></div>
+
+
+</body>
+</html>
