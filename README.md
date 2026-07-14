@@ -1,6 +1,6 @@
 # 🌿 JeevanMitra AI — Multilingual Smart Farming Assistant
 
-🔗 **[Live Demo]( https://krnishanth05.github.io/JeevanMitraAI/)** _(update this link after deploying — see [Deployment](#deployment) below)_
+🔗 **[Live Demo]( https://krnishanth05.github.io/JeevanMitraAI/)** 
 
 JeevanMitra AI is a web app that helps Indian farmers with:
 
